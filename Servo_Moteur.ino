@@ -1,51 +1,50 @@
 /*
- * --- Commande Servo Moteur MG 995
+ * --- Commande Servo Moteur MG 995 ---
  * 
  * - Programme basique sur Arduino Mega
  * - IDE Arduino 2.3.3
  * 
  * --- Constituants :
- * - Servo moteur MG 995
- * - Potentiomètre 10 KOhm
+ *   - Servo moteur MG 995
+ *   - Potentiomètre 10 KOhm
  * 
  * Version 1 : 12 Novembre 2024
  */
 
- // --- inclusion des bibliothèques
- #include <Servo.h>
- 
-// --- Déclaration des variables et autres objets
-Servo myServo;
-int const potPin = A0;      // Le curseur du potentiometre est connecté à la broche analogique A0 de l'arduino
-int potVal;                 // Variable de la position du curseur apr_s conversion numérique [0 à 1023] 10 bits
-int angle;                  // Variable de fixation de l'angle axe moteur
-int const Angle_Mini = 0;   // Fixe la borne inférieur de la variation angulaire de l'axe moteur
-int const Angle_MAxi = 179; // Fixe la borne supérieur de la variation angulaire de l'axe moteur
+// --- Inclusion des bibliothèques ---
+#include <Servo.h>
 
-void setup()
-{
-  myServo.attach(3);       // Fonction déclarant que la MLI du servo est connectée àn la broche digital 3
-  Serial.begin(9600);      // Initialisation de la liaison série PC <---> Arduino
+// --- Déclaration des variables et autres objets ---
+Servo myServo;
+const int potPin = A0;       // Le curseur du potentiomètre est connecté à la broche analogique A0
+int potVal;                  // Valeur numérique du potentiomètre [0 à 1023]
+int angle;                   // Valeur de l'angle du moteur
+const int Angle_Mini = 0;    // Borne inférieure de l'angle
+const int Angle_Maxi = 179;  // Borne supérieure de l'angle
+
+void setup() {
+  myServo.attach(3);         // Attache le servo à la broche numérique 3 pour la commande PWM
+  Serial.begin(9600);        // Initialise la liaison série à 9600 bauds pour la communication avec le PC
 }
 
-void loop()
-{
-  Serial.println("");
-  Serial.println("Nouvelle commande d'angle !!");
-  Serial.println("");
+void loop() {
+  Serial.println("\nNouvelle commande d'angle !!\n");
 
-    // --- Lecture de la commabde angulaire
-  potVal = analogRead(potPin);  // Lecture de la valeur du potentiomètre
+  // --- Lecture de la commande angulaire ---
+  potVal = analogRead(potPin);  // Lit la valeur du potentiomètre
   Serial.print("Valeur du potentiomètre : ");
   Serial.print(potVal);
 
-  // Mise à l'échelle de la valeur angulaire proportionnellement à l'amplitude de la conversion numérique
-  angle = map(potVal, 0, 1023, Angle_Mini, Angle_MAxi);
+  // Mise à l'échelle de la valeur angulaire en fonction de la plage de conversion numérique
+  angle = map(potVal, 0, 1023, Angle_Mini, Angle_Maxi);
 
-  //  -- Affichage de l'angle demandé
+  // --- Affichage de l'angle demandé ---
   Serial.print(" ; angle : ");
   Serial.println(angle);
 
+  // Applique l'angle au servo
   myServo.write(angle);
+
+  // Délai de 5 secondes avant la prochaine lecture
   delay(5000);
 }
